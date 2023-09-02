@@ -14,17 +14,19 @@ namespace sort_functions
         public static async Task<List<string>> RunOrchestrator(
             [OrchestrationTrigger] TaskOrchestrationContext context)
         {
+            //CREATE LOGS 
             ILogger logger = context.CreateReplaySafeLogger("Orchestrator");
             logger.LogInformation("Saying hello.");
-            var outputs = new List<string>();
 
+            //PROCESS REQUEST
             string body = context.GetInput<string>();
             object json = JsonConvert.DeserializeObject(body);
 
+            var outputs = new List<string>();
 
             // Replace name and input with values relevant for your Durable Functions Activity
             outputs.Add(await context.CallActivityAsync<string>(nameof(SayHello), "Tokyo"));
-            outputs.Add(await context.CallActivityAsync<string>(nameof(LinqSort.Sort), "Seattle"));
+            outputs.Add(await context.CallActivityAsync<string>(nameof(LinqSort.LinqSorting), "Seattle"));
             outputs.Add(await context.CallActivityAsync<string>(nameof(SayHello), "London"));
 
             // returns ["Hello Tokyo!", "Hello Seattle!", "Hello London!"]
