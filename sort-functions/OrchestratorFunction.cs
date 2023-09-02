@@ -3,22 +3,28 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.DurableTask;
 using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using sort_functions.ActivitiesFunctions;
 
 namespace sort_functions
 {
-    public static class Orquestrator
+    public static class OrchestratorFunction
     {
-        [Function("Orquestrator")]
+        [Function("Orchestrator")]
         public static async Task<List<string>> RunOrchestrator(
             [OrchestrationTrigger] TaskOrchestrationContext context)
         {
-            ILogger logger = context.CreateReplaySafeLogger("Joaozin");
+            ILogger logger = context.CreateReplaySafeLogger("Orchestrator");
             logger.LogInformation("Saying hello.");
             var outputs = new List<string>();
 
+            string body = context.GetInput<string>();
+            object json = JsonConvert.DeserializeObject(body);
+
+
             // Replace name and input with values relevant for your Durable Functions Activity
-            outputs.Add(await context.CallActivityAsync<string>(new TaskName("SayHello"), "Tokyo"));
-            outputs.Add(await context.CallActivityAsync<string>(nameof(SayHello), "Seattle"));
+            outputs.Add(await context.CallActivityAsync<string>(nameof(SayHello), "Tokyo"));
+            outputs.Add(await context.CallActivityAsync<string>(nameof(LinqSort.Sort), "Seattle"));
             outputs.Add(await context.CallActivityAsync<string>(nameof(SayHello), "London"));
 
             // returns ["Hello Tokyo!", "Hello Seattle!", "Hello London!"]
@@ -33,17 +39,19 @@ namespace sort_functions
             return $"Hello {name}!";
         }
 
-        [Function("Function1_HttpStart")]
+        [Function("FunctionSortArray_HttpStart")]
         public static async Task<HttpResponseData> HttpStart(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req,
             [DurableClient] DurableTaskClient client,
             FunctionContext executionContext)
         {
-            ILogger logger = executionContext.GetLogger("Function1_HttpStart");
+            ILogger logger = executionContext.GetLogger("FunctionSortArray_HttpStart");
+
+            string body = await new StreamReader(req.Body).ReadToEndAsync();
 
             // Function input comes from the request content.
             string instanceId = await client.ScheduleNewOrchestrationInstanceAsync(
-                new TaskName("Orquestrator"));
+                "Orchestrator", body);
 
             logger.LogInformation("Started orchestration with ID = '{instanceId}'.", instanceId);
 
