@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "sort_functions": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7271"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "httpPort": 30250,
+      "useSSL": false
+    }
+  }
+}
