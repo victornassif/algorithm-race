@@ -8,6 +8,6 @@ namespace sort_functions.Models
 {
     public class ParamModel
     {
-        public int[] nonSortedArray{ get; set; } = new int[0];
+        public int[] nonSortedArray { get; set; } = new int[0];
     }
 }

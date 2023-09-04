@@ -5,6 +5,7 @@ using Microsoft.DurableTask.Client;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using sort_functions.ActivitiesFunctions;
+using sort_functions.Models;
 
 namespace sort_functions
 {
@@ -24,36 +25,44 @@ namespace sort_functions
             if (string.IsNullOrEmpty(bodyString))
                 throw new ArgumentNullException("inform the parameters correctly");
 
-            List<Task<int[]>> tasks = new List<Task<int[]>>
+            List<Task<WinnerModel>> tasks = new List<Task<WinnerModel>>
             {
-                context.CallActivityAsync<int[]>(nameof(BubbleSort.BubbleSorting), bodyString),
-                context.CallActivityAsync<int[]>(nameof(BucketSort.BucketSorting), bodyString)
+                context.CallActivityAsync<WinnerModel>(nameof(BucketSort.BucketSorting), bodyString),
+                context.CallActivityAsync<WinnerModel>(nameof(BubbleSort.BubbleSorting), bodyString),
+                context.CallActivityAsync<WinnerModel>(nameof(CountingSort.CountingSorting), bodyString),
+                context.CallActivityAsync<WinnerModel>(nameof(HeapSort.HeapSorting), bodyString),
+                context.CallActivityAsync<WinnerModel>(nameof(InsertionSort.InsertionSorting), bodyString),
+                context.CallActivityAsync<WinnerModel>(nameof(LinqSort.LinqSorting), bodyString),
+                context.CallActivityAsync<WinnerModel>(nameof(MergeSort.MergeSorting), bodyString),
+                context.CallActivityAsync<WinnerModel>(nameof(QuickSort.QuickSorting), bodyString),
+                context.CallActivityAsync<WinnerModel>(nameof(RadixSort.RadixSorting), bodyString),
+                context.CallActivityAsync<WinnerModel>(nameof(SelectionSort.SelectionSorting), bodyString),
+                context.CallActivityAsync<WinnerModel>(nameof(ShellSort.ShellSorting), bodyString)
             };
-            //var t3 = context.CallActivityAsync<string>(nameof(CountingSort.CountingSorting), array);
-            //var t4 = context.CallActivityAsync<string>(nameof(HeapSort.HeapSorting), array);
-            //var t5 = context.CallActivityAsync<string>(nameof(InsertionSort.InsertionSorting), array);
-            //var t6 = context.CallActivityAsync<string>(nameof(LinqSort.LinqSorting), array);
-            //var t7 = context.CallActivityAsync<string>(nameof(MergeSort.MergeSorting), array);
-            //var t8 = context.CallActivityAsync<string>(nameof(QuickSort.QuickSorting), array);
-            //var t9 = context.CallActivityAsync<string>(nameof(RadixSort.RadixSorting), array);
-            //var t10 = context.CallActivityAsync<string>(nameof(SelectionSort.SelectionSorting), array);
-            //var t11 = context.CallActivityAsync<string>(nameof(ShellSort.ShellSorting), array);
 
-            Task<int[]> tresult = await Task.WhenAny(tasks);
-
-            int[] t = tresult.Result;
-
-            Console.WriteLine("there goes the result");
-            foreach (var item in t)
+            Task<WinnerModel> tresult = await Task.WhenAny(tasks);
+            int[] t = new int[0];
+            try
             {
-                Console.WriteLine(item);
-            }
-            //var tResult = await Task.WhenAny(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
-            //return 
-            //var tResult = await Task.WhenAny(t1, t2, t3, t6);
+                t = tresult.Result.sortedArray;
 
-            // returns ["Hello Tokyo!", "Hello Seattle!", "Hello London!"]
-            //return outputs;
+            }
+            catch (AggregateException ae)
+            {
+                ae.Handle((x) =>
+                {
+                    Console.WriteLine(x.Message);
+                    return false;
+                });
+            }
+
+            //int[] t = tresult.Result.sortedArray;
+
+            Console.WriteLine($"HERE'S WINNER!");
+            Console.WriteLine($"Winner: {tresult.Result.winnerName}");
+            Console.WriteLine($"TimeElapsed: {tresult.Result.timeElapsed.ToString()}");
+            
+
         }
 
         //[Function(nameof(SayHello))]
