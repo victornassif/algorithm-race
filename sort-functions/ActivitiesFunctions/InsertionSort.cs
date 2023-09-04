@@ -5,36 +5,24 @@ namespace sort_functions.ActivitiesFunctions
     public static class InsertionSort
     {
         [Function(nameof(InsertionSorting))]
-        public static int[] InsertionSorting([ActivityTrigger] int[] array, int leftIndex, int rightIndex)
+        public static int[] InsertionSorting([ActivityTrigger] int[] array)
         {
-            var i = leftIndex;
-            var j = rightIndex;
-            var pivot = array[leftIndex];
-            while (i <= j)
+            int length = array.Length;
+            for (int i = 1; i < length; i++)
             {
-                while (array[i] < pivot)
+                var key = array[i];
+                var flag = 0;
+                for (int j = i - 1; j >= 0 && flag != 1;)
                 {
-                    i++;
-                }
-
-                while (array[j] > pivot)
-                {
-                    j--;
-                }
-                if (i <= j)
-                {
-                    int temp = array[i];
-                    array[i] = array[j];
-                    array[j] = temp;
-                    i++;
-                    j--;
+                    if (key < array[j])
+                    {
+                        array[j + 1] = array[j];
+                        j--;
+                        array[j + 1] = key;
+                    }
+                    else flag = 1;
                 }
             }
-
-            if (leftIndex < j)
-                InsertionSorting(array, leftIndex, j);
-            if (i < rightIndex)
-                InsertionSorting(array, i, rightIndex);
             return array;
         }
     }

@@ -5,14 +5,14 @@ namespace sort_functions.ActivitiesFunctions
     public static class RadixSort
     {
         [Function(nameof(RadixSorting))]
-        public static int[] RadixSorting([ActivityTrigger] int[] array, int size)
+        public static int[] RadixSorting([ActivityTrigger] int[] array)
         {
-            {
-                var maxVal = GetMaxVal(array, size);
-                for (int exponent = 1; maxVal / exponent > 0; exponent *= 10)
-                    CountingSortIntern(array, size, exponent);
-                return array;
-            }
+            int size = array.Length;
+            var maxVal = GetMaxVal(array, size);
+            for (int exponent = 1; maxVal / exponent > 0; exponent *= 10)
+                CountingSortIntern(array, size, exponent);
+            return array;
+
         }
 
         public static int GetMaxVal(int[] array, int size)

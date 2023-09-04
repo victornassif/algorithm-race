@@ -5,7 +5,7 @@ namespace sort_functions.ActivitiesFunctions
     public static class SelectionSort
     {
         [Function(nameof(SelectionSorting))]
-        public static int[] SelectionSorting([ActivityTrigger] int[] array, int size)
+        public static int[] SelectionSorting([ActivityTrigger] int[] array)
         {
             var arrayLength = array.Length;
             for (int i = 0; i < arrayLength - 1; i++)

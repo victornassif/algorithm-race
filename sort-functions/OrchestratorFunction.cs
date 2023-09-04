@@ -11,7 +11,7 @@ namespace sort_functions
     public static class OrchestratorFunction
     {
         [Function("Orchestrator")]
-        public static async Task<List<string>> RunOrchestrator(
+        public static async Task RunOrchestrator(
             [OrchestrationTrigger] TaskOrchestrationContext context)
         {
             //CREATE LOGS 
@@ -19,27 +19,50 @@ namespace sort_functions
             logger.LogInformation("Saying hello.");
 
             //PROCESS REQUEST
-            string body = context.GetInput<string>();
-            object json = JsonConvert.DeserializeObject(body);
+            string? bodyString = context.GetInput<string>();
 
-            var outputs = new List<string>();
+            if (string.IsNullOrEmpty(bodyString))
+                throw new ArgumentNullException("inform the parameters correctly");
 
-            // Replace name and input with values relevant for your Durable Functions Activity
-            outputs.Add(await context.CallActivityAsync<string>(nameof(SayHello), "Tokyo"));
-            outputs.Add(await context.CallActivityAsync<string>(nameof(LinqSort.LinqSorting), "Seattle"));
-            outputs.Add(await context.CallActivityAsync<string>(nameof(SayHello), "London"));
+            List<Task<int[]>> tasks = new List<Task<int[]>>
+            {
+                context.CallActivityAsync<int[]>(nameof(BubbleSort.BubbleSorting), bodyString),
+                context.CallActivityAsync<int[]>(nameof(BucketSort.BucketSorting), bodyString)
+            };
+            //var t3 = context.CallActivityAsync<string>(nameof(CountingSort.CountingSorting), array);
+            //var t4 = context.CallActivityAsync<string>(nameof(HeapSort.HeapSorting), array);
+            //var t5 = context.CallActivityAsync<string>(nameof(InsertionSort.InsertionSorting), array);
+            //var t6 = context.CallActivityAsync<string>(nameof(LinqSort.LinqSorting), array);
+            //var t7 = context.CallActivityAsync<string>(nameof(MergeSort.MergeSorting), array);
+            //var t8 = context.CallActivityAsync<string>(nameof(QuickSort.QuickSorting), array);
+            //var t9 = context.CallActivityAsync<string>(nameof(RadixSort.RadixSorting), array);
+            //var t10 = context.CallActivityAsync<string>(nameof(SelectionSort.SelectionSorting), array);
+            //var t11 = context.CallActivityAsync<string>(nameof(ShellSort.ShellSorting), array);
+
+            Task<int[]> tresult = await Task.WhenAny(tasks);
+
+            int[] t = tresult.Result;
+
+            Console.WriteLine("there goes the result");
+            foreach (var item in t)
+            {
+                Console.WriteLine(item);
+            }
+            //var tResult = await Task.WhenAny(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
+            //return 
+            //var tResult = await Task.WhenAny(t1, t2, t3, t6);
 
             // returns ["Hello Tokyo!", "Hello Seattle!", "Hello London!"]
-            return outputs;
+            //return outputs;
         }
 
-        [Function(nameof(SayHello))]
-        public static string SayHello([ActivityTrigger] string name, FunctionContext executionContext)
-        {
-            ILogger logger = executionContext.GetLogger("SayHello");
-            logger.LogInformation("Saying hello to {name}.", name);
-            return $"Hello {name}!";
-        }
+        //[Function(nameof(SayHello))]
+        //public static string SayHello([ActivityTrigger] string name, FunctionContext executionContext)
+        //{
+        //    ILogger logger = executionContext.GetLogger("SayHello");
+        //    logger.LogInformation("Saying hello to {name}.", name);
+        //    return $"Hello {name}!";
+        //}
 
         [Function("FunctionSortArray_HttpStart")]
         public static async Task<HttpResponseData> HttpStart(

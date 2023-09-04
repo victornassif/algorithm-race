@@ -10,7 +10,7 @@ namespace sort_functions.ActivitiesFunctions
     public static class LinqSort
     {
         [Function(nameof(LinqSorting))]
-        public static int[] LinqSorting([ActivityTrigger] int[] array, int size)
+        public static int[] LinqSorting([ActivityTrigger] int[] array)
         {
             List<int> list = array.ToList().Order().ToList();
             return list.ToArray<int>();

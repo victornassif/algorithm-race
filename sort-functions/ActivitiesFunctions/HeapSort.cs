@@ -5,8 +5,10 @@ namespace sort_functions.ActivitiesFunctions
     public static class HeapSort
     {
         [Function(nameof(HeapSorting))]
-        public static int[] HeapSorting([ActivityTrigger] int[] array, int size)
+        public static int[] HeapSorting([ActivityTrigger] int[] array)
         {
+            var size = array.Length;
+
             if (size <= 1)
                 return array;
             for (int i = size / 2 - 1; i >= 0; i--)

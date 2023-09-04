@@ -1,12 +1,28 @@
 ﻿using Microsoft.Azure.Functions.Worker;
+using sort_functions.Models;
 
 namespace sort_functions.ActivitiesFunctions
 {
     public static class BucketSort
     {
         [Function(nameof(BucketSorting))]
-        public static int[] BucketSorting([ActivityTrigger] int[] array)
+        public static int[] BucketSorting([ActivityTrigger] ParamModel model)
         {
+            var array = model.nonSortedArray;
+
+            if (array == null)
+                throw new ArgumentNullException("null array");
+            else if (array.Length == 0)
+                throw new ArgumentException("empty array");
+            //else
+            //    foreach (var item in array)
+            //    {
+            //        Console.Write(item);
+            //    }
+            try
+            {
+
+
             if (array == null || array.Length <= 1)
             {
                 return array;
@@ -50,6 +66,13 @@ namespace sort_functions.ActivitiesFunctions
             }
 
             return array;
+            
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

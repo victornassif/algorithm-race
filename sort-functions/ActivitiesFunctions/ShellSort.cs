@@ -6,8 +6,9 @@ namespace sort_functions.ActivitiesFunctions
     {
 
         [Function(nameof(ShellSorting))]
-        public static int[] ShellSorting([ActivityTrigger] int[] array, int size)
+        public static int[] ShellSorting([ActivityTrigger] int[] array)
         {
+            int size = array.Length;
             for (int interval = size / 2; interval > 0; interval /= 2)
             {
                 for (int i = interval; i < size; i++)

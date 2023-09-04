@@ -5,25 +5,39 @@ namespace sort_functions.ActivitiesFunctions
     public static class QuickSort
     {
         [Function(nameof(QuickSorting))]
-        public static int[] QuickSorting([ActivityTrigger] int[] array, int size)
+        public static int[] QuickSorting([ActivityTrigger] int[] array, int leftIndex = 0, int rightIndex = int.MinValue)
         {
-            for (int interval = size / 2; interval > 0; interval /= 2)
+            if (rightIndex == int.MinValue) 
+                rightIndex = array.Length - 1;
+
+            var i = leftIndex;
+            var j = rightIndex;
+            var pivot = array[leftIndex];
+            while (i <= j)
             {
-                for (int i = interval; i < size; i++)
+                while (array[i] < pivot)
                 {
-                    var currentKey = array[i];
-                    var k = i;
+                    i++;
+                }
 
-                    while (k >= interval && array[k - interval] > currentKey)
-                    {
-                        array[k] = array[k - interval];
-                        k -= interval;
-                    }
-
-                    array[k] = currentKey;
+                while (array[j] > pivot)
+                {
+                    j--;
+                }
+                if (i <= j)
+                {
+                    int temp = array[i];
+                    array[i] = array[j];
+                    array[j] = temp;
+                    i++;
+                    j--;
                 }
             }
 
+            if (leftIndex < j)
+                QuickSorting(array, leftIndex, j);
+            if (i < rightIndex)
+                QuickSorting(array, i, rightIndex);
             return array;
         }
     }

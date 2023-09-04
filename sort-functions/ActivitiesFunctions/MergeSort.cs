@@ -5,8 +5,11 @@ namespace sort_functions.ActivitiesFunctions
     public static class MergeSort
     {
         [Function(nameof(MergeSorting))]
-        public static int[] MergeSorting([ActivityTrigger] int[] array, int left, int right)
+        public static int[] MergeSorting([ActivityTrigger] int[] array, int left = 0, int right = int.MinValue)
         {
+            if (right == int.MinValue) 
+                right = array.Length - 1;
+
             if (left < right)
             {
                 int middle = left + (right - left) / 2;
