@@ -1,12 +1,23 @@
 ﻿using Microsoft.Azure.Functions.Worker;
+using sort_functions.Models;
+using System.Diagnostics;
 
 namespace sort_functions.ActivitiesFunctions
 {
     public static class InsertionSort
     {
         [Function(nameof(InsertionSorting))]
-        public static int[] InsertionSorting([ActivityTrigger] int[] array)
+        public static WinnerModel InsertionSorting([ActivityTrigger] ParamModel model)
         {
+            Stopwatch timer = Stopwatch.StartNew();
+            var array = model.nonSortedArray;
+            if (array == null)
+                throw new ArgumentNullException("null array");
+            else if (array.Length == 0)
+                throw new ArgumentException("empty array");
+            else if (array.Length == 1)
+                throw new ArgumentException("array already sorted");
+
             int length = array.Length;
             for (int i = 1; i < length; i++)
             {
@@ -23,7 +34,8 @@ namespace sort_functions.ActivitiesFunctions
                     else flag = 1;
                 }
             }
-            return array;
+            timer.Stop();
+            return new WinnerModel(array, "InsertionSort", timer.Elapsed);
         }
     }
 }

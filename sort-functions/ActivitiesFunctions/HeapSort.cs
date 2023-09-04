@@ -1,16 +1,25 @@
 ﻿using Microsoft.Azure.Functions.Worker;
+using sort_functions.Models;
+using System.Diagnostics;
 
 namespace sort_functions.ActivitiesFunctions
 {
     public static class HeapSort
     {
         [Function(nameof(HeapSorting))]
-        public static int[] HeapSorting([ActivityTrigger] int[] array)
+        public static WinnerModel HeapSorting([ActivityTrigger] ParamModel model)
         {
-            var size = array.Length;
+            Stopwatch timer = Stopwatch.StartNew();
+            var array = model.nonSortedArray;
 
-            if (size <= 1)
-                return array;
+            if (array == null)
+                throw new ArgumentNullException("null array");
+            else if (array.Length == 0)
+                throw new ArgumentException("empty array");
+            else if (array.Length == 1)
+                throw new ArgumentException("array already sorted");
+
+            var size = array.Length;
             for (int i = size / 2 - 1; i >= 0; i--)
             {
                 Heapify(array, size, i);
@@ -22,7 +31,8 @@ namespace sort_functions.ActivitiesFunctions
                 array[i] = tempVar;
                 Heapify(array, i, 0);
             }
-            return array;
+            timer.Stop();
+            return new WinnerModel(array, "HeapSort", timer.Elapsed);
         }
 
         static void Heapify(int[] array, int size, int index)

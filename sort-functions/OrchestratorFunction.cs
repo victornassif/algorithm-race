@@ -33,8 +33,8 @@ namespace sort_functions
                 context.CallActivityAsync<WinnerModel>(nameof(HeapSort.HeapSorting), bodyString),
                 context.CallActivityAsync<WinnerModel>(nameof(InsertionSort.InsertionSorting), bodyString),
                 context.CallActivityAsync<WinnerModel>(nameof(LinqSort.LinqSorting), bodyString),
-                context.CallActivityAsync<WinnerModel>(nameof(MergeSort.MergeSorting), bodyString),
-                context.CallActivityAsync<WinnerModel>(nameof(QuickSort.QuickSorting), bodyString),
+                //context.CallActivityAsync<WinnerModel>(nameof(MergeSort.MergeSorting), bodyString),
+                //context.CallActivityAsync<WinnerModel>(nameof(QuickSort.QuickSorting), bodyString),
                 context.CallActivityAsync<WinnerModel>(nameof(RadixSort.RadixSorting), bodyString),
                 context.CallActivityAsync<WinnerModel>(nameof(SelectionSort.SelectionSorting), bodyString),
                 context.CallActivityAsync<WinnerModel>(nameof(ShellSort.ShellSorting), bodyString)
@@ -56,22 +56,10 @@ namespace sort_functions
                 });
             }
 
-            //int[] t = tresult.Result.sortedArray;
-
             Console.WriteLine($"HERE'S WINNER!");
             Console.WriteLine($"Winner: {tresult.Result.winnerName}");
             Console.WriteLine($"TimeElapsed: {tresult.Result.timeElapsed.ToString()}");
-            
-
         }
-
-        //[Function(nameof(SayHello))]
-        //public static string SayHello([ActivityTrigger] string name, FunctionContext executionContext)
-        //{
-        //    ILogger logger = executionContext.GetLogger("SayHello");
-        //    logger.LogInformation("Saying hello to {name}.", name);
-        //    return $"Hello {name}!";
-        //}
 
         [Function("FunctionSortArray_HttpStart")]
         public static async Task<HttpResponseData> HttpStart(

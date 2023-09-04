@@ -10,7 +10,6 @@ namespace sort_functions.ActivitiesFunctions
         public static WinnerModel BubbleSorting([ActivityTrigger] ParamModel model)
         {
             Stopwatch timer = Stopwatch.StartNew();
-
             var array = model.nonSortedArray;
 
             if (array == null)

@@ -1,12 +1,24 @@
 ﻿using Microsoft.Azure.Functions.Worker;
+using sort_functions.Models;
+using System.Diagnostics;
 
 namespace sort_functions.ActivitiesFunctions
 {
     public static class SelectionSort
     {
         [Function(nameof(SelectionSorting))]
-        public static int[] SelectionSorting([ActivityTrigger] int[] array)
+        public static WinnerModel SelectionSorting([ActivityTrigger] ParamModel model)
         {
+            Stopwatch timer = Stopwatch.StartNew();
+            var array = model.nonSortedArray;
+
+            if (array == null)
+                throw new ArgumentNullException("null array");
+            else if (array.Length == 0)
+                throw new ArgumentException("empty array");
+            else if (array.Length == 1)
+                throw new ArgumentException("array already sorted");
+
             var arrayLength = array.Length;
             for (int i = 0; i < arrayLength - 1; i++)
             {
@@ -22,7 +34,9 @@ namespace sort_functions.ActivitiesFunctions
                 array[smallestVal] = array[i];
                 array[i] = tempVar;
             }
-            return array;
+
+            timer.Stop();
+            return new WinnerModel(array, "SelectionSort", timer.Elapsed);
         }
     }
 }

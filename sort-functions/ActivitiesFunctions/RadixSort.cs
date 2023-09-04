@@ -1,18 +1,31 @@
 ﻿using Microsoft.Azure.Functions.Worker;
+using sort_functions.Models;
+using System.Diagnostics;
 
 namespace sort_functions.ActivitiesFunctions
 {
     public static class RadixSort
     {
         [Function(nameof(RadixSorting))]
-        public static int[] RadixSorting([ActivityTrigger] int[] array)
+        public static WinnerModel RadixSorting([ActivityTrigger] ParamModel model)
         {
+            Stopwatch timer = Stopwatch.StartNew();
+            var array = model.nonSortedArray;
+
+            if (array == null)
+                throw new ArgumentNullException("null array");
+            else if (array.Length == 0)
+                throw new ArgumentException("empty array");
+            else if (array.Length == 1)
+                throw new ArgumentException("array already sorted");
+
             int size = array.Length;
             var maxVal = GetMaxVal(array, size);
             for (int exponent = 1; maxVal / exponent > 0; exponent *= 10)
                 CountingSortIntern(array, size, exponent);
-            return array;
-
+            
+            timer.Stop();
+            return new WinnerModel(array, "RadixSort", timer.Elapsed);
         }
 
         public static int GetMaxVal(int[] array, int size)
